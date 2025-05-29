@@ -94,7 +94,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 [AI_NEURAL_NET]
               </h3>
               <p className="readable-text terminal-font text-sm">
-                Multi-personality AI ecosystem: Eco-coach, Crypto-analyst, and Punk-hacker AIs
+                Multi-personality AI ecosystem: Eco-coach, Crypto-analyst, and Punk-hacker AIs by Sensay API
               </p>
             </CardContent>
           </Card>
