@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Leaf, TrendingDown, TrendingUp, Activity, AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { okxDexService } from '../services/OkxDexService';
 
 interface TokenEmission {
   symbol: string;
@@ -27,62 +27,42 @@ export const CarbonTracker: React.FC = () => {
   const fetchRealTokenData = async () => {
     setLoading(true);
     setError(null);
+    
     try {
-      console.log('Fetching real-time data from OKX DEX API...');
+      console.log('Fetching real-time eco token data from OKX...');
       
-      // Using OKX public API endpoint that doesn't require authentication
-      const response = await fetch('https://www.okx.com/api/v5/market/tickers?instType=SPOT', {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`OKX API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('OKX API Response:', data);
-
-      if (!data.data || !Array.isArray(data.data)) {
-        throw new Error('Invalid API response format');
-      }
-
-      // Process real token data with carbon emission calculations
-      const ecoTokens = ['SOL-USDT', 'ETH-USDT', 'ADA-USDT', 'DOT-USDT', 'ALGO-USDT', 'MATIC-USDT'];
+      const ecoTokens = await okxDexService.getEcoFriendlyTokens();
       const tokenData: TokenEmission[] = [];
 
-      ecoTokens.forEach(symbol => {
-        const tokenInfo = data.data.find((item: any) => item.instId === symbol);
-        if (tokenInfo) {
-          const baseSymbol = symbol.split('-')[0];
-          const carbonScore = getCarbonScore(baseSymbol);
-          const emissions = getEmissionData(baseSymbol);
-          
-          tokenData.push({
-            symbol: baseSymbol,
-            name: getTokenName(baseSymbol),
-            carbonScore,
-            trend: parseFloat(tokenInfo.sodUtc8) > 0 ? 'up' : parseFloat(tokenInfo.sodUtc8) < 0 ? 'down' : 'stable',
-            emissions: emissions.kwh,
-            description: emissions.description,
-            price: `$${parseFloat(tokenInfo.last).toFixed(4)}`,
-            change24h: `${parseFloat(tokenInfo.sodUtc8).toFixed(2)}%`,
-            volume24h: `$${(parseFloat(tokenInfo.vol24h) / 1000000).toFixed(2)}M`,
-            marketCap: calculateMarketCap(baseSymbol, parseFloat(tokenInfo.last))
-          });
-        }
+      ecoTokens.forEach(tokenInfo => {
+        const baseSymbol = tokenInfo.instId.split('-')[0];
+        const carbonScore = okxDexService.calculateCarbonScore(baseSymbol);
+        const ecoDescription = okxDexService.getEcoImpactDescription(baseSymbol);
+        
+        tokenData.push({
+          symbol: baseSymbol,
+          name: getTokenName(baseSymbol),
+          carbonScore,
+          trend: parseFloat(tokenInfo.sodUtc8) > 0 ? 'up' : parseFloat(tokenInfo.sodUtc8) < 0 ? 'down' : 'stable',
+          emissions: getEmissionData(baseSymbol).kwh,
+          description: ecoDescription,
+          price: `$${parseFloat(tokenInfo.last).toFixed(4)}`,
+          change24h: `${parseFloat(tokenInfo.sodUtc8).toFixed(2)}%`,
+          volume24h: `$${(parseFloat(tokenInfo.vol24h) / 1000000).toFixed(2)}M`,
+          marketCap: calculateMarketCap(baseSymbol, parseFloat(tokenInfo.last))
+        });
       });
 
       if (tokenData.length === 0) {
-        throw new Error('No token data found');
+        throw new Error('No eco token data received from OKX');
       }
 
       setTokenEmissions(tokenData);
       setLastUpdate(new Date());
+      
+      console.log(`Successfully processed ${tokenData.length} eco-friendly tokens`);
     } catch (error) {
-      console.error('Real API fetch error:', error);
+      console.error('Real-time data fetch error:', error);
       setError(error instanceof Error ? error.message : 'Unknown error occurred');
     } finally {
       setLoading(false);
@@ -103,8 +83,7 @@ export const CarbonTracker: React.FC = () => {
       'ADA': { kwh: '0.0017 kWh/tx', description: 'Research-driven sustainable design' },
       'DOT': { kwh: '0.0021 kWh/tx', description: 'Nominated Proof-of-Stake consensus' },
       'ALGO': { kwh: '0.0008 kWh/tx', description: 'Pure Proof-of-Stake, carbon negative' },
-      'MATIC': { kwh: '0.0079 kWh/tx', description: 'Layer 2 scaling solution' },
-      'BTC': { kwh: '741 kWh/tx', description: 'High energy consumption mining' }
+      'MATIC': { kwh: '0.0079 kWh/tx', description: 'Layer 2 scaling solution' }
     };
     return emissions[symbol] || { kwh: 'N/A', description: 'Energy data unavailable' };
   };
@@ -147,7 +126,6 @@ export const CarbonTracker: React.FC = () => {
 
   useEffect(() => {
     fetchRealTokenData();
-    // Auto-refresh every 30 seconds
     const interval = setInterval(fetchRealTokenData, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -158,7 +136,7 @@ export const CarbonTracker: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Leaf className="h-5 w-5 text-green-400 neon-glow-soft" />
-            <span className="readable-green terminal-font">[CARBON_TRACKER]</span>
+            <span className="readable-green terminal-font">[LOADING_CARBON_DATA...]</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -180,17 +158,17 @@ export const CarbonTracker: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <AlertCircle className="h-5 w-5 text-red-400" />
-            <span className="text-red-400 terminal-font">[API_ERROR]</span>
+            <span className="text-red-400 terminal-font">[OKX_API_ERROR]</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="readable-text mb-4">Failed to fetch real-time data: {error}</p>
+          <p className="readable-text terminal-font mb-4">OKX DEX API Error: {error}</p>
           <Button 
             onClick={fetchRealTokenData} 
-            className="pixel-button"
+            className="pixel-button terminal-font"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
-            [RETRY]
+            [RETRY_CONNECTION]
           </Button>
         </CardContent>
       </Card>
@@ -203,7 +181,7 @@ export const CarbonTracker: React.FC = () => {
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Leaf className="h-5 w-5 text-green-400 neon-glow-soft" />
-            <span className="readable-green terminal-font">[REAL_TIME_CARBON_TRACKER]</span>
+            <span className="readable-green terminal-font">[OKX_CARBON_TRACKER]</span>
           </div>
           <Button 
             onClick={fetchRealTokenData} 
@@ -215,10 +193,10 @@ export const CarbonTracker: React.FC = () => {
           </Button>
         </CardTitle>
         <CardDescription className="readable-accent terminal-font">
-          Live environmental impact & market data from OKX DEX
+          Live environmental impact data from OKX DEX API
           {lastUpdate && (
             <span className="block text-xs mt-1">
-              Last update: {lastUpdate.toLocaleTimeString()}
+              Last sync: {lastUpdate.toLocaleTimeString()}
             </span>
           )}
         </CardDescription>
@@ -240,28 +218,28 @@ export const CarbonTracker: React.FC = () => {
               
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="readable-text">Price:</span>
-                  <span className="readable-green font-bold">{token.price}</span>
+                  <span className="readable-text terminal-font">Price:</span>
+                  <span className="readable-green font-bold terminal-font">{token.price}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="readable-text">24h Change:</span>
-                  <span className={`font-bold ${parseFloat(token.change24h) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  <span className="readable-text terminal-font">24h Change:</span>
+                  <span className={`font-bold terminal-font ${parseFloat(token.change24h) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                     {token.change24h}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="readable-text">Volume:</span>
-                  <span className="readable-accent">{token.volume24h}</span>
+                  <span className="readable-text terminal-font">Volume:</span>
+                  <span className="readable-accent terminal-font">{token.volume24h}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="readable-text">Market Cap:</span>
-                  <span className="readable-accent">{token.marketCap}</span>
+                  <span className="readable-text terminal-font">Market Cap:</span>
+                  <span className="readable-accent terminal-font">{token.marketCap}</span>
                 </div>
                 <div className="border-t border-green-400/30 pt-2 mt-2">
-                  <div className="readable-accent text-xs">
+                  <div className="readable-accent terminal-font text-xs">
                     <strong>Energy:</strong> {token.emissions}
                   </div>
-                  <div className="readable-text text-xs mt-1">
+                  <div className="readable-text terminal-font text-xs mt-1">
                     {token.description}
                   </div>
                 </div>
@@ -271,10 +249,10 @@ export const CarbonTracker: React.FC = () => {
         </div>
         
         <div className="mt-6 eco-card p-4 border-green-400">
-          <h4 className="readable-green font-bold terminal-font mb-2 neon-glow-soft">💡 [ECO_INSIGHT]</h4>
+          <h4 className="readable-green font-bold terminal-font mb-2 neon-glow-soft">💡 [REAL_TIME_ECO_INSIGHT]</h4>
           <p className="readable-text text-sm terminal-font">
-            Real-time data shows that PoS tokens like {tokenEmissions.find(t => t.carbonScore >= 90)?.symbol || 'ADA'} 
-            use 99.9% less energy than PoW networks. Choose wisely for a greener portfolio.
+            Live OKX DEX data shows PoS tokens like {tokenEmissions.find(t => t.carbonScore >= 90)?.symbol || 'ADA'} 
+            use 99.9% less energy than PoW networks. Real-time prices help optimize green investments.
           </p>
         </div>
       </CardContent>
