@@ -3,7 +3,7 @@ import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } f
 import { TOKEN_PROGRAM_ID, createMint, createAccount, mintTo, getAccount } from '@solana/spl-token';
 
 // Green Token program ID
-const GREEN_TOKEN_PROGRAM_ID = new PublicKey('GrEEn111111111111111111111111111111111111111');
+const GREEN_TOKEN_PROGRAM_ID = new PublicKey('9SWarQDspenBSpPFi1yECs4BCebrw89MYVv6JEZMxzoa');
 
 export interface GreenTokenAccount {
   balance: number;
