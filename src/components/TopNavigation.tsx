@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Leaf, Wallet, Menu, X, Copy, ExternalLink, LogOut } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ThemeToggle } from './ThemeToggle';
 
 interface TopNavigationProps {
   currentView: 'welcome' | 'chat' | 'carbon' | 'trading' | 'voting';
@@ -124,11 +125,11 @@ export const TopNavigation: React.FC<TopNavigationProps> = ({ currentView, onVie
         {/* Logo */}
         <div className="flex items-center space-x-4">
           <div className="pixel-border bg-black p-2 rounded-lg animate-pulse-glow">
-            <Leaf className="h-8 w-8 text-green-400 neon-glow-soft" />
+            <Leaf className="h-8 w-8 theme-text-accent theme-glow" />
           </div>
           <div className="hidden sm:block">
-            <h1 className="text-2xl font-bold text-green-bright terminal-font">GreenDAO</h1>
-            <p className="text-xs text-cyber-secondary terminal-font">[ECO_PROTOCOL_v2.1]</p>
+            <h1 className="text-2xl font-bold theme-text-accent terminal-font">GreenDAO</h1>
+            <p className="text-xs theme-text-secondary terminal-font">[ECO_PROTOCOL_v2.1]</p>
           </div>
         </div>
 
@@ -142,7 +143,7 @@ export const TopNavigation: React.FC<TopNavigationProps> = ({ currentView, onVie
               className={`px-6 py-3 terminal-font font-bold transition-all duration-300 ${
                 currentView === item.id 
                   ? 'bg-green-400 text-black border-2 border-green-400' 
-                  : 'text-high-contrast border-2 border-transparent hover:border-green-400 hover:bg-green-400/10'
+                  : 'theme-text-primary border-2 border-transparent hover:border-green-400 hover:bg-green-400/10'
               }`}
             >
               {item.label}
@@ -155,14 +156,17 @@ export const TopNavigation: React.FC<TopNavigationProps> = ({ currentView, onVie
           ))}
         </div>
 
-        {/* Wallet & Mobile Menu */}
+        {/* Theme Toggle & Wallet & Mobile Menu */}
         <div className="flex items-center space-x-4">
+          {/* Theme Toggle */}
+          <ThemeToggle />
+
           {/* Wallet Section */}
           {isWalletConnected ? (
             <div className="hidden sm:flex items-center space-x-4 eco-card px-4 py-2">
               <div className="text-sm terminal-font">
-                <div className="text-green-bright font-bold">{greenTokens} GREEN</div>
-                <div className="text-high-contrast text-xs">
+                <div className="theme-text-accent font-bold">{greenTokens} GREEN</div>
+                <div className="theme-text-primary text-xs">
                   {walletAddress.slice(0, 4)}...{walletAddress.slice(-4)}
                 </div>
               </div>
@@ -171,7 +175,7 @@ export const TopNavigation: React.FC<TopNavigationProps> = ({ currentView, onVie
                   onClick={copyAddress}
                   variant="ghost"
                   size="sm"
-                  className="h-8 w-8 p-0 text-green-bright hover:bg-green-400/20"
+                  className="h-8 w-8 p-0 theme-text-accent hover:bg-green-400/20"
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
@@ -201,7 +205,7 @@ export const TopNavigation: React.FC<TopNavigationProps> = ({ currentView, onVie
             variant="ghost"
             size="sm"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden text-high-contrast hover:bg-green-400/20"
+            className="lg:hidden theme-text-primary hover:bg-green-400/20"
           >
             {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </Button>
@@ -223,7 +227,7 @@ export const TopNavigation: React.FC<TopNavigationProps> = ({ currentView, onVie
                 className={`w-full justify-start terminal-font font-bold ${
                   currentView === item.id 
                     ? 'bg-green-400 text-black' 
-                    : 'text-high-contrast hover:bg-green-400/20'
+                    : 'theme-text-primary hover:bg-green-400/20'
                 }`}
               >
                 {item.label}
@@ -242,18 +246,18 @@ export const TopNavigation: React.FC<TopNavigationProps> = ({ currentView, onVie
               <div className="eco-card p-4">
                 <div className="flex items-center justify-between">
                   <div className="terminal-font">
-                    <div className="text-green-bright font-bold">{greenTokens} GREEN</div>
-                    <div className="text-high-contrast text-sm">
+                    <div className="theme-text-accent font-bold">{greenTokens} GREEN</div>
+                    <div className="theme-text-primary text-sm">
                       {walletAddress.slice(0, 8)}...{walletAddress.slice(-6)}
                     </div>
-                    <div className="text-cyber-secondary text-xs">{walletBalance} SOL</div>
+                    <div className="theme-text-secondary text-xs">{walletBalance} SOL</div>
                   </div>
                   <div className="flex space-x-2">
                     <Button
                       onClick={copyAddress}
                       variant="ghost"
                       size="sm"
-                      className="h-8 w-8 p-0 text-green-bright"
+                      className="h-8 w-8 p-0 theme-text-accent"
                     >
                       <Copy className="h-4 w-4" />
                     </Button>
