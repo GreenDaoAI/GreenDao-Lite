@@ -94,3 +94,11 @@ http://localhost:5173
 ├── package.json        # Project metadata
 └── tailwind.config.ts  # Tailwind configuration
 ```
+---
+
+### 📜 Scripts 
+```
+npm run dev       # Start development server
+npm run build     # Build for production
+npm run preview   # Preview production build
+```
