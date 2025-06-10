@@ -1,4 +1,4 @@
-# Contributing to GreenDao
+# Contributing to GreenDao Lite
 
 Thank you for your interest in contributing to GreenDao!
 
