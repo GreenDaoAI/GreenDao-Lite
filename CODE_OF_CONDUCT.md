@@ -1,4 +1,4 @@
-# Code of Conduct for GreenDao
+# Code of Conduct for GreenDao Lite
 
 We are committed to creating a welcoming and inclusive community for all. Please follow this Code of Conduct to help maintain a positive environment.
 
