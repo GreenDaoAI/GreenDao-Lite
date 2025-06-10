@@ -53,22 +53,6 @@ Let your voice be heard! Users can vote on green initiatives and feature rollout
 - 📦 DoraHacks Submission: [BUIDL #26463](https://dorahacks.io/buidl/26463)
 
 ---
-## Project structure
-
-├── public/             # Static assets
-├── src/
-│   ├── components/     # Reusable UI components
-│   ├── hooks/          # Custom React hooks
-│   ├── pages/          # Route-based views
-│   ├── lib/            # Utility functions
-│   ├── App.tsx         # Main app container
-│   └── main.tsx        # App entry point
-├── index.html          # HTML template
-├── package.json        # Project metadata
-└── tailwind.config.ts  # Tailwind configuration
----
-
----
 
 ## 🔧 Getting Started
 
@@ -93,4 +77,20 @@ npm run dev  # or bun dev
 # Open your browser at:
 http://localhost:5173
 
+```
+---
+### Project Structure 
 
+```
+├── public/             # Static assets
+├── src/
+│   ├── components/     # Reusable UI components
+│   ├── hooks/          # Custom React hooks
+│   ├── pages/          # Route-based views
+│   ├── lib/            # Utility functions
+│   ├── App.tsx         # Main app container
+│   └── main.tsx        # App entry point
+├── index.html          # HTML template
+├── package.json        # Project metadata
+└── tailwind.config.ts  # Tailwind configuration
+```
