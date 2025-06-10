@@ -1,6 +1,6 @@
-# 🌿 GreenDao Prototype
+# 🌿 GreenDao Lite
 
-**GreenDao** is a prototype of an eco-conscious decentralized application that merges environmental awareness with blockchain-powered tools. Designed for developers, crypto users, and sustainability advocates, it offers a playful yet impactful way to track and reduce carbon impact while interacting with real market data.
+**GreenDao Lite** is a prototype of an eco-conscious decentralized application that merges environmental awareness with blockchain-powered tools. Designed for developers, crypto users, and sustainability advocates, it offers a playful yet impactful way to track and reduce carbon impact while interacting with real market data.
 
 ---
 
