@@ -1,4 +1,4 @@
-# Security Policy for GreenDao
+# Security Policy for GreenDao Lite
 
 ## Reporting a Vulnerability
 
