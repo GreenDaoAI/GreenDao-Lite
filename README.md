@@ -30,7 +30,7 @@ Make sure you have the following installed:
 1.  Clone the repository:
 
    
-    git clone [https://github.com/your-username/green-dao.git](https://github.com/your-username/green-dao.git)
+    git clone [https://github.com/GreenDaoAI/GreenDao-Lite.git](https://github.com/GreenDaoAI/GreenDao-Lite.git)
     cd green-dao
     
 2.  Install dependencies:
